@@ -1,0 +1,33 @@
+{
+  "name": "@hireflow/resumes",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hireflow/ai": "workspace:*",
+    "@hireflow/config": "workspace:*",
+    "@hireflow/db": "workspace:*",
+    "@hireflow/entitlements": "workspace:*",
+    "@hireflow/jobs": "workspace:*",
+    "@hireflow/matching": "workspace:*",
+    "@hireflow/shared": "workspace:*",
+    "@react-pdf/renderer": "^4.3.1",
+    "docx": "^9.5.1",
+    "drizzle-orm": "^0.38.4",
+    "mammoth": "^1.9.1",
+    "react": "19.3.1",
+    "unpdf": "^1.4.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/react": "^19.2.0",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

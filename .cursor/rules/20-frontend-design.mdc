@@ -1,0 +1,17 @@
+---
+description: Frontend application, marketing website, responsive UI, design system, accessibility and client-side behavior conventions for HireFlow.
+globs: "apps/marketing/**/*,apps/web/**/*,apps/frontend/**/*,frontend/**/*,src/**/*.tsx,src/**/*.jsx,src/**/*.css,src/**/*.scss,packages/ui/**/*"
+alwaysApply: false
+---
+# Frontend and Product Design
+
+- Inspect the installed framework, routing, styling, component library, design tokens and existing examples before coding. Do not introduce a competing design system.
+- Treat marketing and product application as distinct user experiences. Marketing pages need clear positioning, evidence, feature demonstrations, SEO and conversion paths. App screens need task efficiency, useful information hierarchy and secure authenticated flows.
+- Design for responsive desktop, tablet and mobile, keyboard use, screen readers, visible focus, sufficient contrast and reduced motion.
+- Use semantic HTML, accessible form labels, validation messages and meaningful button/link semantics.
+- Every control must work. Avoid dead buttons, fake data presented as real, decorative-only interactions and placeholder pages represented as complete features.
+- Provide loading, empty, error, success, permission-denied, offline and provider-unavailable states where applicable.
+- Prefer reusable components and design tokens. Avoid excessive abstraction, over-cardification, gratuitous gradients, arbitrary animation and layout shifts.
+- Keep sensitive business rules and authorization on the server. Client-side hiding is not access control.
+- Use realistic fixtures clearly marked as demo data. Never leak another user's data into examples or previews.
+- Verify real user journeys at relevant breakpoints and with keyboard navigation; run the project's actual lint, type and test commands.

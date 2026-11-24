@@ -1,0 +1,16 @@
+---
+description: Test strategy, regression verification, code review expectations and release readiness for HireFlow.
+globs: "**/*.test.*,**/*.spec.*,tests/**/*,test/**/*,e2e/**/*,playwright.config.*,vitest.config.*,jest.config.*,pytest.ini"
+alwaysApply: false
+---
+# Testing and Verification
+
+- Inspect package scripts and existing test conventions before running commands. Prefer the narrowest relevant tests first.
+- Test user-visible behavior, authorization boundaries, validation, error handling, provider failures, empty states and important edge cases.
+- For job ingestion, test normalization, source provenance, pagination, throttling, retries, stale/expired listings and deduplication false positives.
+- For matching and AI, test deterministic baselines, schema validation, privacy routing, provider fallback, quotas, quality fixtures and non-determinism appropriately.
+- For resumes, test malformed/large files, extraction correctness, user approval, export and prevention of fabricated fields.
+- For marketing pages, verify mobile layouts, semantics, metadata, canonical URLs, sitemap and accessibility.
+- Do not weaken/remove tests or snapshot assertions merely to make a suite green. Explain intentional test changes.
+- Report exact command, exit status, passed/failed/skipped counts and relevant environment constraints. Do not claim tests were run if they were not.
+- A passing unit suite is not proof of end-to-end or production readiness. State verification scope precisely.

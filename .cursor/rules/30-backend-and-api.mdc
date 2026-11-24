@@ -1,0 +1,16 @@
+---
+description: Backend services, APIs, authentication, authorization, validation, integrations, background jobs and reliability for HireFlow.
+globs: "apps/api/**/*,apps/server/**/*,backend/**/*,server/**/*,services/**/*,**/routes/**/*,**/controllers/**/*,**/middleware/**/*"
+alwaysApply: false
+---
+# Backend and API Engineering
+
+- Inspect the actual backend framework, routing, error handling, auth middleware, data-access patterns and API conventions first.
+- Validate request parameters, body, query and external provider responses at boundaries. Use the project's established schema-validation library when available.
+- Enforce authentication, authorization, ownership and per-user isolation in server-side services/queries. Test cross-user access denial.
+- Use consistent response/error contracts, timeouts, cancellation where useful, bounded retries with backoff, idempotency for retried writes and rate limits.
+- Keep provider-specific code behind adapters. Normalize provider responses and retain provenance, source identifiers and timestamps.
+- Protect background jobs against duplicate delivery, partial failure and retry storms. Make jobs observable and safe to replay.
+- Use parameterized database access, transactions for multi-step invariants and explicit validation for state transitions.
+- Do not log resumes, tokens, passwords, raw inbox contents or sensitive payloads. Redact provider errors and user identifiers appropriately.
+- Document API contracts and error cases. Test authentication, authorization, validation, idempotency and failure paths, not only happy paths.

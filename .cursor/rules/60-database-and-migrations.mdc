@@ -1,0 +1,16 @@
+---
+description: Database schemas, migrations, indexes, data lifecycle, ownership isolation and query performance for HireFlow.
+globs: "prisma/**/*,drizzle/**/*,migrations/**/*,db/**/*,database/**/*,packages/database/**/*,**/*.sql,**/*schema*"
+alwaysApply: false
+---
+# Database and Data Integrity
+
+- Inspect the existing ORM, migration system, naming conventions and schema before changing data structures.
+- Model users, jobs, companies, resumes, applications and provider records with explicit ownership, relationships, constraints and lifecycle semantics.
+- Enforce user ownership in queries and mutation paths; do not rely solely on globally unique IDs.
+- Add indexes based on actual query patterns and explain material trade-offs. Avoid premature indexing and unnecessary denormalization.
+- Use migrations that are reviewed, reproducible and safe for existing data. Prefer expand/backfill/contract for risky production changes.
+- Never reset, drop, truncate, rewrite migration history or run destructive data migrations without explicit approval and a verified backup/recovery plan.
+- Keep secrets and sensitive personal information out of seed files, fixtures, logs and generated docs.
+- Use transactions for invariants spanning multiple writes; define cascade behavior intentionally.
+- Test migrations from a representative starting state and test rollback where supported. Do not claim reversibility if data loss makes rollback impossible.

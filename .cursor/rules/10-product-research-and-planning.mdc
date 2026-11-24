@@ -1,0 +1,15 @@
+---
+description: Product discovery, competitor research, user journeys, prioritization, feature specifications and architecture planning for HireFlow.
+alwaysApply: false
+---
+# Product Research and Planning
+
+When researching or planning HireFlow:
+- Start from the user problem and target persona; do not add a feature merely because a competitor has it.
+- Compare relevant products across actual workflows, plan limits, pricing, differentiation, accessibility, privacy and weaknesses. Prefer official product/pricing/documentation sources; corroborate with independent user feedback.
+- Record URL, publisher/source type, access date, supported claim and confidence for material findings. Separate verified facts from inference and recommendations.
+- Map the full journey and failure states, not just happy-path screens.
+- Prioritize with a transparent framework (e.g. impact, confidence, reach, effort, risk, operating cost and dependencies). Maintain P0/P1/P2/P3 or an equivalent agreed prioritization.
+- Define acceptance criteria, analytics events, privacy implications, accessibility expectations, data model/API dependencies and verification before implementation.
+- Do not fabricate user research, survey findings, market sizes, competitor pricing or product capabilities. Label gaps and propose validation.
+- Keep a decision log for material stack, product, architecture and provider choices. Avoid premature microservices and avoid building a large roadmap all at once.

@@ -1,0 +1,37 @@
+{
+  "name": "@hireflow/web",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hireflow/auth": "workspace:*",
+    "@hireflow/config": "workspace:*",
+    "@hireflow/db": "workspace:*",
+    "@hireflow/entitlements": "workspace:*",
+    "@hireflow/jobs": "workspace:*",
+    "@hireflow/matching": "workspace:*",
+    "@hireflow/resumes": "workspace:*",
+    "@hireflow/shared": "workspace:*",
+    "@hireflow/ui": "workspace:*",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.38.4",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.5",
+    "@types/node": "^22.13.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "tailwindcss": "4.3.5",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

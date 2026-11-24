@@ -1,0 +1,15 @@
+---
+description: Public marketing site, positioning, conversion paths, content quality, technical SEO and structured data for HireFlow.
+globs: "apps/marketing/**/*,marketing/**/*,website/**/*,content/**/*,public/**/*,**/*sitemap*,**/*robots*"
+alwaysApply: false
+---
+# Marketing Website and SEO
+
+- The marketing website is a first-class public product, separate from the authenticated app. Its purpose is to explain HireFlow, demonstrate real value, build trust and convert visitors; do not force an immediate login redirect.
+- Provide clear paths to Start Free, Sign In, Explore Product, feature pages and useful resources. Keep application and marketing authentication boundaries clear.
+- Publish only capabilities that actually exist or label clearly as upcoming. Never create fake testimonials, customer logos, usage numbers, job statistics or security certifications.
+- Create useful, original content for genuine user intent. Avoid thin programmatic SEO pages, keyword stuffing and repetitive AI-generated copy.
+- Use unique titles/descriptions, canonical URLs, correct indexability, internal links, optimized assets, sitemap and robots directives where appropriate.
+- Implement structured data only when the page satisfies the relevant search-engine guidelines. JobPosting markup is only for eligible individual job detail pages with accurate current data; never place it on search/listing pages or fabricate postings.
+- Preserve job source attribution and comply with the source's reuse/indexing restrictions. Expire or update stale job pages.
+- Measure conversion with privacy-respecting analytics and consent choices appropriate to deployment jurisdictions.

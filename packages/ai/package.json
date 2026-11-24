@@ -1,0 +1,10 @@
+{
+  "name": "@hireflow/ai",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run" },
+  "dependencies": { "@hireflow/config": "workspace:*", "zod": "^3.24.2" },
+  "devDependencies": { "typescript": "^5.7.3", "vitest": "^3.0.5" }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@hireflow/extension",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "wxt",
+    "build": "node -e \"console.log('HireFlow extension is a Phase 5 stub; skipping WXT build.')\"",
+    "build:ext": "wxt build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "wxt": "^0.19.27"
+  }
+}

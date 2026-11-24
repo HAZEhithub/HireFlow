@@ -1,0 +1,26 @@
+Asha Raman
+Bengaluru, India
+asha.raman@example.com
++91 90000 11111
+https://github.com/asha-raman
+
+SUMMARY
+Backend engineer with TypeScript and PostgreSQL.
+
+SKILLS
+TypeScript, PostgreSQL, React, SQL
+
+EXPERIENCE
+Software Engineer | Northwind Labs | Bengaluru
+Jan 2022 - Present
+Built billing APIs in TypeScript.
+Owned PostgreSQL schema design.
+
+EDUCATION
+National Institute of Technology
+B.Tech Computer Science
+2018 - 2022
+
+PROJECTS
+Campus Jobs Board
+Matching internships with TypeScript and PostgreSQL.
