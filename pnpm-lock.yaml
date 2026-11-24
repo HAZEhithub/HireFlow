@@ -17,6 +17,12 @@ importers:
 
   apps/api:
     dependencies:
+      '@hireflow/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
+      '@hireflow/applications':
+        specifier: workspace:*
+        version: link:../../packages/applications
       '@hireflow/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -121,6 +127,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@hireflow/applications':
+        specifier: workspace:*
+        version: link:../../packages/applications
       '@hireflow/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -191,6 +200,12 @@ importers:
       '@hireflow/config':
         specifier: workspace:*
         version: link:../config
+      '@hireflow/db':
+        specifier: workspace:*
+        version: link:../db
+      '@hireflow/entitlements':
+        specifier: workspace:*
+        version: link:../entitlements
       zod:
         specifier: ^3.24.2
         version: 3.25.76
@@ -201,6 +216,40 @@ importers:
       vitest:
         specifier: ^3.0.5
         version: 3.2.7(@types/node@26.6.6)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)
+
+  packages/applications:
+    dependencies:
+      '@hireflow/db':
+        specifier: workspace:*
+        version: link:../db
+      '@hireflow/entitlements':
+        specifier: workspace:*
+        version: link:../entitlements
+      '@hireflow/jobs':
+        specifier: workspace:*
+        version: link:../jobs
+      '@hireflow/matching':
+        specifier: workspace:*
+        version: link:../matching
+      '@hireflow/shared':
+        specifier: workspace:*
+        version: link:../shared
+      drizzle-orm:
+        specifier: ^0.38.4
+        version: 0.38.4(@electric-sql/pglite@0.2.17)(@types/react@19.3.0)(kysely@0.29.9)(postgres@3.4.9)(react@19.3.1)
+      zod:
+        specifier: ^3.24.2
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^22.13.1
+        version: 22.20.5
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.5
+        version: 3.2.7(@types/node@22.20.5)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)
 
   packages/auth:
     dependencies:
@@ -220,6 +269,19 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+
+  packages/billing:
+    dependencies:
+      '@hireflow/entitlements':
+        specifier: workspace:*
+        version: link:../entitlements
+    devDependencies:
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.5
+        version: 3.2.7(@types/node@26.6.6)(jiti@2.7.0)(lightningcss@1.33.0)(tsx@4.23.15)
 
   packages/config:
     devDependencies:
@@ -269,6 +331,9 @@ importers:
       '@hireflow/db':
         specifier: workspace:*
         version: link:../db
+      '@hireflow/entitlements':
+        specifier: workspace:*
+        version: link:../entitlements
       drizzle-orm:
         specifier: ^0.38.4
         version: 0.38.4(@electric-sql/pglite@0.2.17)(@types/react@19.3.0)(kysely@0.29.9)(postgres@3.4.9)(react@19.3.1)

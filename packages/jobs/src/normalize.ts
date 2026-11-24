@@ -57,7 +57,9 @@ export function canonicalUrl(url: string): string | undefined {
 export function normalizeEmploymentType(raw: string | undefined | null): string {
   if (!raw) return "";
   const value = raw.toLowerCase().replace(/[\s_-]+/g, "");
-  if (value.includes("intern")) return "internship";
+  if (/\bintern(s|ship)?\b/.test(raw.toLowerCase()) && !value.includes("internal") && !value.includes("international")) {
+    return "internship";
+  }
   if (value.includes("fulltime") || value === "full-time" || value.includes("permanent")) return "full_time";
   if (value.includes("parttime")) return "part_time";
   if (value.includes("contract") || value.includes("temporary") || value.includes("temp")) return "contract";

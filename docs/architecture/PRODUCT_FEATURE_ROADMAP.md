@@ -8,8 +8,8 @@ Existing Phase 0–4 P0 is unchanged. New differentiators are **not** launch blo
 | 1 | Auth, profile, empty jobs/apps/resumes, inbox, usage, export/delete, marketing, entitlements catalog | This delivery |
 | 2 | Curated ATS registry, URL import, search/save/expiry, deterministic compatibility | Implemented 2026-11-21. Production registry empty until board IDs are verified. No scrape; extension not required |
 | 3 | Resume Studio: parse/export, deterministic analysis, resume–job evidence, user-approved tailoring foundation | Implemented 2026-11-21. No paid AI. Application Pack drafts besides the resume remain Phase 5 |
-| 4 | Application tracker + follow-ups | Unlimited tracker on Free |
-| 5 | Extension save-job; **Career Evidence Vault** (manual); **Application Pack** assemble; tailoring (Pro, planned) | User-approved text |
+| 4 | Application tracker + follow-ups | Implemented 2026-11-24. Unlimited tracker on Free. No auto-apply |
+| 5 | Extension save-job; **Career Evidence Vault** (manual); **Application Pack** assemble; tailoring (Pro, planned) | Implemented 2026-11-24 for vault, pack assemble, and visible-tab clip. Cover-letter AI drafts remain unimplemented |
 | 6 | **Job Fit Evidence Map** (Pro); company brief (ATS fields only); analytics | No invented stats |
 | 7 | Job Search Strategy Coach; Career Skill Graph (user data) | Not market demand |
 | 8 | Job Search Intelligence if source + pipeline data exist | ADR-0009 |

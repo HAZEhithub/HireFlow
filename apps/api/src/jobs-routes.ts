@@ -1,13 +1,15 @@
 import { isAdminUser, rateLimit, rateLimitSubject } from "@hireflow/config";
-import { getDb, profile, user } from "@hireflow/db";
+import { decrementUsagePeriod, getDb, profile, user } from "@hireflow/db";
 import { assertEntitlement } from "@hireflow/entitlements";
 import {
   FRESHNESS_COPY,
   freshnessCopy,
   JOB_FILTER_FACETS,
   addEmployerBoard,
-  countImportsThisMonth,
+  claimUrlImportQuota,
+  getCompanyBriefForUser,
   getJobForUser,
+  JobBriefError,
   importUserJob,
   ingestJobs,
   listIngestRuns,
@@ -20,6 +22,7 @@ import {
   unsaveJobForUser,
   upsertCanonicalJobs,
 } from "@hireflow/jobs";
+import { getEvidenceMapForUser } from "@hireflow/applications";
 import { matchJobToProfile } from "@hireflow/matching";
 import { eq } from "drizzle-orm";
 import type { Hono } from "hono";
@@ -116,6 +119,35 @@ export function registerJobRoutes(
     return c.json({ job: { ...serializeJob(row), match: matchJobToProfile(row, p ?? null) } });
   });
 
+  app.get("/v1/jobs/:id/evidence-map", async (c) => {
+    const u = await requireUser(c);
+    if (!u) return c.json({ error: "unauthorized" }, 401);
+    const db = await getDb();
+    const resumeVersionId = c.req.query("resumeVersionId") || undefined;
+    try {
+      return c.json(await getEvidenceMapForUser(db, u.id, c.req.param("id"), resumeVersionId));
+    } catch (error) {
+      if (error instanceof JobBriefError) {
+        return c.json({ error: error.code, message: error.message }, error.httpStatus as 400);
+      }
+      throw error;
+    }
+  });
+
+  app.get("/v1/jobs/:id/brief", async (c) => {
+    const u = await requireUser(c);
+    if (!u) return c.json({ error: "unauthorized" }, 401);
+    const db = await getDb();
+    try {
+      return c.json(await getCompanyBriefForUser(db, u.id, c.req.param("id")));
+    } catch (error) {
+      if (error instanceof JobBriefError) {
+        return c.json({ error: error.code, message: error.message }, error.httpStatus as 400);
+      }
+      throw error;
+    }
+  });
+
   app.post("/v1/jobs/:id/save", async (c) => {
     const u = await requireUser(c);
     if (!u) return c.json({ error: "unauthorized" }, 401);
@@ -149,12 +181,11 @@ export function registerJobRoutes(
     });
     if (!limitedUser.ok || !limitedIp.ok) return c.json({ error: "too_many_requests" }, 429);
     const db = await getDb();
-    const used = await countImportsThisMonth(db, u.id);
-    await assertEntitlement(u.id, "jobs.url_import_per_month", { used, increment: 1 });
     const json = await readJsonSafe(c);
     if (json == null) return c.json({ error: "invalid_json" }, 400);
     const parsed = importSchema.safeParse(json);
     if (!parsed.success) return c.json({ error: parsed.error.flatten() }, 400);
+    await claimUrlImportQuota(db, u.id);
     try {
       const imported = await importUserJob(parsed.data, { userId: u.id });
       const counts = await upsertCanonicalJobs(db, [imported.job]);
@@ -167,6 +198,7 @@ export function registerJobRoutes(
         job: stored ? serializeJob(stored) : null,
       });
     } catch (error) {
+      await decrementUsagePeriod(db, u.id, "jobs.url_import_per_month");
       return c.json({ error: error instanceof Error ? error.message : "import_failed" }, 400);
     }
   });
@@ -280,6 +312,8 @@ function serializeJob(row: {
   saved?: boolean;
   importNotes?: string | null;
   injectionFlagged?: boolean | null;
+  applyUrlStatus?: string | null;
+  signals?: Array<{ kind: string; message: string }>;
 }) {
   return {
     id: row.id,
@@ -310,6 +344,8 @@ function serializeJob(row: {
     saved: row.saved ?? false,
     importNotes: row.listingKind === "user_import" ? (row.importNotes ?? null) : null,
     injectionFlagged: Boolean(row.injectionFlagged),
+    applyUrlStatus: row.applyUrlStatus ?? "unchecked",
+    signals: (row.signals ?? []).map((signal) => ({ kind: signal.kind, message: signal.message })),
     sourceAttribution:
       row.listingKind === "fixture"
         ? "Development sample — not a live opening."

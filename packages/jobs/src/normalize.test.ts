@@ -23,6 +23,9 @@ describe("normalization", () => {
     expect(parseLocation("Remote")).toMatchObject({ locationText: "Remote" });
     expect(normalizeEmploymentType("FullTime")).toBe("full_time");
     expect(normalizeEmploymentType("Intern")).toBe("internship");
+    expect(normalizeEmploymentType("Internship")).toBe("internship");
+    expect(normalizeEmploymentType("internal")).toBe("");
+    expect(normalizeEmploymentType("international")).toBe("");
     expect(normalizeEmploymentType("mystery")).toBe("");
     expect(inferWorkplace("Hybrid", ["Mumbai, India"])).toBe("hybrid");
     expect(inferWorkplace(undefined, [])).toBe("unknown");

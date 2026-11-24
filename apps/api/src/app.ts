@@ -1,11 +1,14 @@
+import { ApplicationError, exportWorkspace } from "@hireflow/applications";
+import { JobBriefError } from "@hireflow/jobs";
 import { getAuth, getSession, revokeSession } from "@hireflow/auth";
 import { flags, rateLimit, rateLimitSubject, urls } from "@hireflow/config";
 import {
-  aiUsage,
   completenessFrom,
+  countAiUsageThisMonth,
   countUsageEvents,
   ensureUserWorkspace,
   getDb,
+  getUsagePeriodCount,
   notification,
   profile,
   resume,
@@ -20,6 +23,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { purgeUserResumeFiles } from "@hireflow/resumes";
+import { registerApplicationRoutes } from "./applications-routes";
 import { registerJobRoutes } from "./jobs-routes";
 import { registerResumeRoutes } from "./resumes-routes";
 
@@ -194,10 +198,12 @@ export function createApp() {
     if (!u) return c.json({ error: "unauthorized" }, 401);
     await assertEntitlement(u.id, "usage.read");
     const db = await getDb();
-    const aiRows = await db.query.aiUsage.findMany({ where: eq(aiUsage.userId, u.id) });
     const events = await countUsageEvents(db, u.id);
+    const aiAssistsUsed = await getUsagePeriodCount(db, u.id, "ai.assists_per_month");
+    const aiSuccessThisMonth = await countAiUsageThisMonth(db, u.id);
     return c.json({
-      aiCalls: aiRows.length,
+      aiAssistsUsed,
+      aiSuccessThisMonth,
       requestEvents: events,
       flags,
       emailConfigured: Boolean(process.env.RESEND_API_KEY),
@@ -215,6 +221,10 @@ export function createApp() {
     const notes = await db.query.notification.findMany({ where: eq(notification.userId, u.id) });
     const saved = await db.query.savedJob.findMany({ where: eq(savedJob.userId, u.id) });
     const ownedResumes = await db.query.resume.findMany({ where: eq(resume.userId, u.id) });
+    const workspace = await exportWorkspace(db, u.id);
+    c.header("Cache-Control", "private, no-store");
+    c.header("Pragma", "no-cache");
+    c.header("Content-Disposition", 'attachment; filename="hireflow-export.json"');
     return c.json({
       exportedAt: new Date().toISOString(),
       user: { id: u.id, name: u.name, email: u.email },
@@ -230,11 +240,17 @@ export function createApp() {
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
       })),
+      applications: workspace.applications,
+      applicationEvents: workspace.events,
+      followUps: workspace.followUps,
+      evidence: workspace.evidence,
+      applicationPackItems: workspace.packItems,
     });
   });
 
   registerJobRoutes(app, requireUser);
   registerResumeRoutes(app, requireUser);
+  registerApplicationRoutes(app, requireUser);
 
   app.delete("/v1/account", async (c) => {
     const u = await requireUser(c);
@@ -247,6 +263,7 @@ export function createApp() {
     }
     const db = await getDb();
     await purgeUserResumeFiles(u.id);
+    await db.delete(savedJob).where(eq(savedJob.userId, u.id));
     await db.delete(user).where(eq(user.id, u.id));
     return clearSessionCookies(c.json({ ok: true }));
   });
@@ -254,6 +271,12 @@ export function createApp() {
   app.onError((err, c) => {
     if (err instanceof EntitlementError) {
       return c.json({ error: err.code, key: err.key, plan: err.plan }, err.httpStatus);
+    }
+    if (err instanceof ApplicationError) {
+      return c.json({ error: err.code, message: err.message }, err.httpStatus as 400);
+    }
+    if (err instanceof JobBriefError) {
+      return c.json({ error: err.code, message: err.message }, err.httpStatus as 400);
     }
     console.error("[api]", err instanceof Error ? err.message : "error");
     return c.json({ error: "internal" }, 500);

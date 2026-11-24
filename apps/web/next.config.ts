@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
     "@hireflow/jobs",
     "@hireflow/matching",
     "@hireflow/resumes",
+    "@hireflow/applications",
     "@hireflow/ai",
   ],
   async headers() {

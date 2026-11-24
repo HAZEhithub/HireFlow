@@ -1,7 +1,7 @@
 "use server";
 
 import { getDb } from "@hireflow/db";
-import { ResumeError } from "@hireflow/resumes";
+import { ResumeError, type ResumeAnalysisResult } from "@hireflow/resumes";
 import {
   applyTailoring,
   analyzeResumeForUser,
@@ -129,7 +129,7 @@ export async function setTemplateAction(formData: FormData) {
   revalidateResume(resumeId);
 }
 
-export async function analyzeAction(resumeId: string) {
+export async function analyzeAction(resumeId: string): Promise<ResumeAnalysisResult> {
   const user = await requireUser();
   const db = await getDb();
   return analyzeResumeForUser(db, user.id, resumeId);

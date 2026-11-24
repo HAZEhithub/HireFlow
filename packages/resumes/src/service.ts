@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { completeAiTask, phrasingSuggestionSchema, wrapUntrusted } from "@hireflow/ai";
 import {
   type HireFlowDb,
   profile,
@@ -9,6 +10,7 @@ import {
   resumeJobMatch,
   resumeTailoringSession,
   resumeVersion,
+  userSettings,
 } from "@hireflow/db";
 import { assertEntitlement } from "@hireflow/entitlements";
 import { getJobForUser } from "@hireflow/jobs";
@@ -203,7 +205,10 @@ export async function getParseDraft(db: HireFlowDb, userId: string, documentId: 
     documentId: doc.id,
     filename: doc.originalFilename,
     parseStatus: doc.parseStatus,
-    ...result,
+    content: result.content,
+    warnings: result.warnings,
+    missingFields: result.missingFields,
+    likelyScanned: result.likelyScanned,
   };
 }
 
@@ -473,6 +478,53 @@ export async function startTailoring(db: HireFlowDb, userId: string, resumeId: s
   const job = await getJobForUser(db, userId, jobId);
   if (!job) throw new ResumeError("not_found", "Job not found.", 404);
   const plan = buildTailorPlan(content, job);
+  const settings = await db.query.userSettings.findFirst({ where: eq(userSettings.userId, userId) });
+  if (settings?.aiExternalConsent) {
+    try {
+      const llm = await completeAiTask({
+        db,
+        userId,
+        feature: "resume.phrasing",
+        payloadClass: "sensitive",
+        needsLlm: true,
+        prompt: wrapUntrusted(
+          JSON.stringify({
+            summary: content.personal.summary,
+            bullets: content.experience.flatMap((row) => row.responsibilities).slice(0, 8),
+            jobTitle: job.title,
+          }),
+          "resume",
+        ),
+        schema: phrasingSuggestionSchema,
+        consent: {
+          aiExternalConsent: settings.aiExternalConsent,
+          aiPaidConsent: settings.aiPaidConsent,
+        },
+      });
+      if (llm.status === "success" && llm.data) {
+        const hay = JSON.stringify(content).toLowerCase();
+        for (const row of llm.data.suggestions) {
+          if (!row.before?.trim() || !row.after?.trim()) continue;
+          if (!hay.includes(row.before.toLowerCase().slice(0, 80))) continue;
+          plan.suggestions.push({
+            id: randomUUID(),
+            kind: "bullet_clarity",
+            path: row.path || "personal.summary",
+            before: row.before,
+            after: row.after,
+            rationale: row.rationale,
+            invented: false,
+          });
+        }
+      } else if (llm.status === "quota") {
+        plan.warnings.push(llm.message ?? "Monthly local phrasing assist limit reached.");
+      } else if (llm.message) {
+        plan.warnings.push(llm.message);
+      }
+    } catch {
+      plan.warnings.push("Local model not available.");
+    }
+  }
   const id = randomUUID();
   await db.insert(resumeTailoringSession).values({
     id,

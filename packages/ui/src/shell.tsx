@@ -27,6 +27,13 @@ export function MarketingHeader({ appUrl }: { appUrl: string }) {
     { href: "/about", label: "About" },
   ];
   return (
+    <>
+    <a
+      href="#main"
+      className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--radius-sm)] focus:bg-white focus:px-3 focus:py-2"
+    >
+      Skip to content
+    </a>
     <header className="border-b border-[var(--color-rule)] bg-[var(--color-paper)]/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between gap-4">
         <Logo />
@@ -65,6 +72,7 @@ export function MarketingHeader({ appUrl }: { appUrl: string }) {
         </div>
       </Container>
     </header>
+    </>
   );
 }
 

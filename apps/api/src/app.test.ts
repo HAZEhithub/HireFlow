@@ -70,6 +70,13 @@ describe("HireFlow API", () => {
       ["/v1/admin/jobs/ingest", "POST"],
       ["/v1/resumes", "GET"],
       ["/v1/resumes", "POST"],
+      ["/v1/applications", "GET"],
+      ["/v1/applications", "POST"],
+      ["/v1/applications/analytics", "GET"],
+      ["/v1/evidence", "GET"],
+      ["/v1/evidence", "POST"],
+      ["/v1/jobs/not-a-job/evidence-map", "GET"],
+      ["/v1/jobs/not-a-job/brief", "GET"],
     ] as const;
     for (const [path, method] of paths) {
       const res = await app.request(path, { method });

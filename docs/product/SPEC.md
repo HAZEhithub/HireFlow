@@ -58,7 +58,9 @@ Live ATS ingest, resume parse/export, matching UI, **browser extension save-job*
 
 **Phase 3 (this delivery):** Resume Studio — parse/review/edit/analyze/match/tailor/export without paid AI.
 
-**Phase 5:** extension save-job (must not block Phase 2).
+**Phase 4 (this delivery):** application tracker + in-app follow-ups. Unlimited on Free. No auto-apply.
+
+**Phase 5 (this delivery):** Career Evidence Vault, Application Pack assemble (paste), extension clips visible tab title + URL. Cover-letter AI drafts remain unimplemented.
 
 **Phase 8:** Job Search Intelligence (ADR 0009).
 

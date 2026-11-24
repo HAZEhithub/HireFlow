@@ -55,7 +55,9 @@ describe("resume tailoring", () => {
     });
     const first = plan.suggestions[0];
     expect(first).toBeTruthy();
-    const decisions = Object.fromEntries(plan.suggestions.map((item) => [item.id, item.id === first?.id ? "accept" : "reject"]));
+    const decisions: Record<string, "accept" | "reject" | "edit"> = Object.fromEntries(
+      plan.suggestions.map((item) => [item.id, item.id === first?.id ? "accept" : "reject"] as const),
+    );
     const tailored = applyTailorDecisions(resume, plan.suggestions, decisions);
     assertNoFabrication(resume, tailored);
     expect(resume.personal.summary).toBe("Builds TypeScript services.");

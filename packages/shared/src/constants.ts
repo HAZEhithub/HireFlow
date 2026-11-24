@@ -21,16 +21,38 @@ export const EMPLOYMENT_TYPES = [
 
 export const APPLICATION_STAGES = [
   "saved",
-  "interested",
   "preparing",
   "applied",
-  "assessment",
   "interview",
-  "awaiting_result",
   "offer",
   "rejected",
   "withdrawn",
 ] as const;
+
+export const APPLICATION_STAGE_LABELS: Record<(typeof APPLICATION_STAGES)[number], string> = {
+  saved: "Saved",
+  preparing: "Preparing",
+  applied: "Applied",
+  interview: "Interview",
+  offer: "Offer",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+};
+
+export const APPLICATION_SOURCES = ["saved_job", "discover", "user_import", "manual"] as const;
+
+export const EVIDENCE_KINDS = ["project", "letter", "transcript", "url", "metric", "other"] as const;
+
+export const APPLICATION_PACK_SLOT_IDS = [
+  "resume",
+  "cover_letter",
+  "outreach",
+  "screening",
+  "interview",
+] as const;
+
+export const MAX_FREE_EVIDENCE = 10;
+export const MAX_PRO_EVIDENCE = 50;
 
 /** Re-exported from entitlements so UI packages can stay catalog-aligned. */
 export const FREE_AI_ASSISTS_PER_MONTH = 5;

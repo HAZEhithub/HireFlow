@@ -165,6 +165,18 @@ export async function ensureSchema(db: HireFlowDb) {
   );
   await run(
     db,
+    sql`CREATE TABLE IF NOT EXISTS "usage_period" (
+      id text PRIMARY KEY,
+      user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+      key text NOT NULL,
+      period_start timestamptz NOT NULL,
+      count integer NOT NULL DEFAULT 0,
+      UNIQUE (user_id, key, period_start)
+    )`,
+  );
+  await run(db, sql`CREATE INDEX IF NOT EXISTS usage_period_user_idx ON "usage_period" (user_id)`);
+  await run(
+    db,
     sql`CREATE TABLE IF NOT EXISTS "usage_event" (
       id text PRIMARY KEY,
       user_id text REFERENCES "user"(id) ON DELETE CASCADE,
@@ -457,4 +469,82 @@ export async function ensureSchema(db: HireFlowDb) {
     )`,
   );
   await run(db, sql`CREATE INDEX IF NOT EXISTS resume_export_user_idx ON "resume_export" (user_id)`);
+  await run(
+    db,
+    sql`CREATE TABLE IF NOT EXISTS "application" (
+      id text PRIMARY KEY,
+      user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+      job_id text REFERENCES "job"(id) ON DELETE SET NULL,
+      company_name text NOT NULL,
+      title text NOT NULL,
+      stage text NOT NULL DEFAULT 'saved',
+      source text NOT NULL DEFAULT 'manual',
+      resume_version_id text REFERENCES "resume_version"(id) ON DELETE SET NULL,
+      notes text,
+      apply_url text,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now()
+    )`,
+  );
+  await run(db, sql`CREATE INDEX IF NOT EXISTS application_user_idx ON "application" (user_id)`);
+  await run(db, sql`CREATE INDEX IF NOT EXISTS application_user_stage_idx ON "application" (user_id, stage)`);
+  await run(db, sql`CREATE INDEX IF NOT EXISTS application_job_idx ON "application" (job_id)`);
+  await run(
+    db,
+    sql`CREATE TABLE IF NOT EXISTS "application_event" (
+      id text PRIMARY KEY,
+      application_id text NOT NULL REFERENCES "application"(id) ON DELETE CASCADE,
+      user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+      from_stage text,
+      to_stage text NOT NULL,
+      at timestamptz NOT NULL DEFAULT now()
+    )`,
+  );
+  await run(db, sql`CREATE INDEX IF NOT EXISTS application_event_application_idx ON "application_event" (application_id)`);
+  await run(db, sql`CREATE INDEX IF NOT EXISTS application_event_user_idx ON "application_event" (user_id)`);
+  await run(
+    db,
+    sql`CREATE TABLE IF NOT EXISTS "follow_up" (
+      id text PRIMARY KEY,
+      application_id text NOT NULL REFERENCES "application"(id) ON DELETE CASCADE,
+      user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+      title text NOT NULL DEFAULT 'Follow up',
+      body text,
+      due_at timestamptz NOT NULL,
+      done_at timestamptz,
+      created_at timestamptz NOT NULL DEFAULT now()
+    )`,
+  );
+  await run(db, sql`CREATE INDEX IF NOT EXISTS follow_up_application_idx ON "follow_up" (application_id)`);
+  await run(db, sql`CREATE INDEX IF NOT EXISTS follow_up_user_idx ON "follow_up" (user_id)`);
+  await run(
+    db,
+    sql`CREATE TABLE IF NOT EXISTS "career_evidence" (
+      id text PRIMARY KEY,
+      user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+      kind text NOT NULL,
+      title text NOT NULL,
+      body text,
+      url text,
+      quoted_as text NOT NULL DEFAULT 'user-provided',
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now()
+    )`,
+  );
+  await run(db, sql`CREATE INDEX IF NOT EXISTS career_evidence_user_idx ON "career_evidence" (user_id)`);
+  await run(
+    db,
+    sql`CREATE TABLE IF NOT EXISTS "application_pack_item" (
+      id text PRIMARY KEY,
+      user_id text NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
+      application_id text NOT NULL REFERENCES "application"(id) ON DELETE CASCADE,
+      slot text NOT NULL,
+      body text NOT NULL,
+      source text NOT NULL DEFAULT 'user_paste',
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now(),
+      UNIQUE (application_id, slot)
+    )`,
+  );
+  await run(db, sql`CREATE INDEX IF NOT EXISTS application_pack_item_user_idx ON "application_pack_item" (user_id)`);
 }

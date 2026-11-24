@@ -2,6 +2,7 @@ import { EmptyState } from "@hireflow/ui";
 import { getDb, notification } from "@hireflow/db";
 import { eq } from "drizzle-orm";
 import { requireUser } from "../../../lib/session";
+import { safeNextPath } from "../../../lib/safe-next";
 import { markAllNotificationsReadAction, markNotificationReadAction } from "../actions";
 
 export default async function NotificationsPage() {
@@ -15,7 +16,7 @@ export default async function NotificationsPage() {
     return (
       <EmptyState
         title="No notifications yet"
-        body="In-app alerts will appear here for follow-ups and job matches. Email is optional and stays off unless a Resend key is configured. An empty inbox is expected in Phase 1."
+        body="In-app alerts appear here for follow-ups you create on applications. Email is optional and stays off unless a Resend key is configured."
       />
     );
   }
@@ -42,6 +43,13 @@ export default async function NotificationsPage() {
               <div>
                 <p className="font-medium">{row.title}</p>
                 {row.body ? <p className="mt-1 text-sm text-[var(--color-ink-soft)]">{row.body}</p> : null}
+                {row.href && safeNextPath(row.href) !== "/" ? (
+                  <p className="mt-2 text-sm">
+                    <a className="text-[var(--color-accent)]" href={safeNextPath(row.href)}>
+                      Open related item
+                    </a>
+                  </p>
+                ) : null}
                 <p className="mt-2 text-xs text-[var(--color-ink-soft)]">
                   {row.readAt ? "Read" : "Unread"}
                 </p>

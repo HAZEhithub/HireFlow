@@ -10,13 +10,14 @@ export const metadata: Metadata = pageMeta({
   path: "/pricing",
 });
 
-const now = ENTITLEMENTS.filter((row) => row.implementedNow && row.grantable);
+const now = ENTITLEMENTS.filter((row) => row.implementedNow && row.grantable && row.free !== false);
 const laterFree = ENTITLEMENTS.filter(
   (row) => !row.implementedNow && row.grantable && row.free !== false,
 );
 const laterPro = ENTITLEMENTS.filter(
-  (row) => row.grantable && row.free === false && row.pro === true,
+  (row) => row.grantable && row.free === false && row.pro === true && !row.implementedNow,
 );
+const complimentary = ENTITLEMENTS.filter((row) => row.complimentaryWhileBillingOff && row.implementedNow);
 
 export default function PricingPage() {
   return (
@@ -47,14 +48,20 @@ export default function PricingPage() {
           </p>
           <ul className="mt-6 space-y-2 text-sm text-[var(--color-ink-soft)]">
             <li>Everything in Free</li>
+            {complimentary.map((row) => (
+              <li key={row.key}>Complimentary preview now: {row.notes}</li>
+            ))}
             {laterPro.map((row) => (
               <li key={row.key}>
                 Planned: {row.notes} (Phase {row.earliestPhase})
               </li>
             ))}
             <li>Higher AI assist budget when a paid provider is approved (planned 50/month, not unlimited)</li>
-            <li>Unlimited resume versions when Resume Studio ships</li>
+            <li>Unlimited resume versions on Pro (Resume Studio is already on Free with a 2-document cap)</li>
           </ul>
+          <p className="mt-4 text-xs text-[var(--color-ink-soft)]">
+            International USD pricing is a hypothesis, not an approved offer. Do not treat $9/month as live.
+          </p>
           <p className="mt-6 text-xs text-[var(--color-ink-soft)]">
             Cancellation: when billing is later enabled, Pro is expected to remain available until the
             end of a paid period, then return to Free. That policy is not in force because billing is off.

@@ -5,11 +5,15 @@ export const JOB_FILTER_FACETS = {
     { value: "onsite", label: "On-site" },
   ],
   employment: [
+    { value: "internship", label: "Internship" },
     { value: "full_time", label: "Full-time" },
     { value: "part_time", label: "Part-time" },
-    { value: "internship", label: "Internship" },
     { value: "contract", label: "Contract" },
     { value: "freelance", label: "Freelance" },
+  ],
+  role: [
+    { value: "internship", label: "Internships" },
+    { value: "full_time", label: "Full-time" },
   ],
   sort: [
     { value: "relevance", label: "Most relevant" },

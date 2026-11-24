@@ -1,10 +1,10 @@
 "use server";
 
 import { rateLimit } from "@hireflow/config";
-import { getDb } from "@hireflow/db";
+import { decrementUsagePeriod, getDb } from "@hireflow/db";
 import { assertEntitlement } from "@hireflow/entitlements";
 import {
-  countImportsThisMonth,
+  claimUrlImportQuota,
   getJobForUser,
   importUserJob,
   saveJobForUser,
@@ -48,11 +48,13 @@ export async function importJobAction(formData: FormData) {
     redirect(`/jobs/import?error=${encodeURIComponent("Too many imports. Try again later.")}`);
   }
   const db = await getDb();
-  const used = await countImportsThisMonth(db, user.id);
-  await assertEntitlement(user.id, "jobs.url_import_per_month", { used, increment: 1 });
   const applyUrl = String(formData.get("applyUrl") ?? "").trim();
   const title = String(formData.get("title") ?? "").trim();
   const companyName = String(formData.get("companyName") ?? "").trim();
+  if (!applyUrl || !title || !companyName) {
+    redirect(`/jobs/import?error=${encodeURIComponent("Apply URL, title, and company are required.")}`);
+  }
+  await claimUrlImportQuota(db, user.id);
   try {
     const imported = await importUserJob(
       {
@@ -86,6 +88,7 @@ export async function importJobAction(formData: FormData) {
       const digest = String((error as { digest?: string }).digest ?? "");
       if (digest.includes("NEXT_REDIRECT")) throw error;
     }
+    await decrementUsagePeriod(db, user.id, "jobs.url_import_per_month");
     const message = error instanceof Error ? error.message : "Import failed.";
     redirect(`/jobs/import?error=${encodeURIComponent(message)}`);
   }

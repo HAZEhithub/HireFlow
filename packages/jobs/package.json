@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hireflow/db": "workspace:*",
+    "@hireflow/entitlements": "workspace:*",
     "drizzle-orm": "^0.38.4"
   },
   "devDependencies": {

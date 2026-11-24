@@ -4,7 +4,7 @@ export default defineConfig({
   manifest: {
     name: "HireFlow",
     description:
-      "Save a job you are already viewing. HireFlow never auto-submits applications. Phase 5 will complete clipping.",
+      "Save the visible tab title and URL from a page you already opened. HireFlow never auto-submits applications.",
     permissions: ["storage", "activeTab"],
     host_permissions: [],
   },

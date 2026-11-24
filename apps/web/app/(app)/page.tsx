@@ -72,6 +72,7 @@ export default async function HomePage() {
             <li>Export or delete your data anytime from Settings.</li>
             <li>Open Discover to search ingested boards, or import a job URL yourself.</li>
             <li>Upload a resume in Resume Studio and compare it with a listing.</li>
+            <li>Track applications you submit yourself. HireFlow never auto-applies.</li>
           </ol>
         </Card>
       </div>
@@ -88,6 +89,9 @@ export default async function HomePage() {
             </Link>
             <Link className="text-sm text-[var(--color-accent)]" href="/jobs/recommended">
               Recommended
+            </Link>
+            <Link className="text-sm text-[var(--color-accent)]" href="/applications">
+              Applications
             </Link>
           </div>
         }

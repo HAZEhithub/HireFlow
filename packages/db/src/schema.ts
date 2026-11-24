@@ -153,6 +153,17 @@ export const featureFlag = pgTable("feature_flag", {
   description: text("description"),
 });
 
+export const usagePeriod = pgTable("usage_period", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  key: text("key").notNull(),
+  periodStart: timestamp("period_start", { withTimezone: true }).notNull(),
+  count: integer("count").notNull().default(0),
+}, (t) => ({
+  uniquePeriod: uniqueIndex("usage_period_user_key_start_idx").on(t.userId, t.key, t.periodStart),
+  userIdx: index("usage_period_user_idx").on(t.userId),
+}));
+
 export const usageEvent = pgTable("usage_event", {
   id: text("id").primaryKey(),
   userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
@@ -401,6 +412,78 @@ export const resumeTailoringSession = pgTable("resume_tailoring_session", {
   userIdx: index("resume_tailoring_user_idx").on(t.userId),
 }));
 
+export const application = pgTable("application", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  jobId: text("job_id").references(() => job.id, { onDelete: "set null" }),
+  companyName: text("company_name").notNull(),
+  title: text("title").notNull(),
+  stage: text("stage").notNull().default("saved"),
+  source: text("source").notNull().default("manual"),
+  resumeVersionId: text("resume_version_id").references(() => resumeVersion.id, { onDelete: "set null" }),
+  notes: text("notes"),
+  applyUrl: text("apply_url"),
+  ...timestamps,
+}, (t) => ({
+  userIdx: index("application_user_idx").on(t.userId),
+  userStageIdx: index("application_user_stage_idx").on(t.userId, t.stage),
+  jobIdx: index("application_job_idx").on(t.jobId),
+}));
+
+export const applicationEvent = pgTable("application_event", {
+  id: text("id").primaryKey(),
+  applicationId: text("application_id").notNull().references(() => application.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  fromStage: text("from_stage"),
+  toStage: text("to_stage").notNull(),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  applicationIdx: index("application_event_application_idx").on(t.applicationId),
+  userIdx: index("application_event_user_idx").on(t.userId),
+}));
+
+export const followUp = pgTable("follow_up", {
+  id: text("id").primaryKey(),
+  applicationId: text("application_id").notNull().references(() => application.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  title: text("title").notNull().default("Follow up"),
+  body: text("body"),
+  dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+  doneAt: timestamp("done_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  applicationIdx: index("follow_up_application_idx").on(t.applicationId),
+  userIdx: index("follow_up_user_idx").on(t.userId),
+}));
+
+export const careerEvidence = pgTable("career_evidence", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(),
+  title: text("title").notNull(),
+  body: text("body"),
+  url: text("url"),
+  quotedAs: text("quoted_as").notNull().default("user-provided"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  userIdx: index("career_evidence_user_idx").on(t.userId),
+}));
+
+export const applicationPackItem = pgTable("application_pack_item", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  applicationId: text("application_id").notNull().references(() => application.id, { onDelete: "cascade" }),
+  slot: text("slot").notNull(),
+  body: text("body").notNull(),
+  source: text("source").notNull().default("user_paste"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => ({
+  uniqueSlot: uniqueIndex("application_pack_item_application_slot_idx").on(t.applicationId, t.slot),
+  userIdx: index("application_pack_item_user_idx").on(t.userId),
+}));
+
 export const resumeExport = pgTable("resume_export", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
@@ -422,6 +505,8 @@ export const userRelations = relations(user, ({ one, many }) => ({
   savedJobs: many(savedJob),
   importedJobs: many(job),
   resumes: many(resume),
+  applications: many(application),
+  evidence: many(careerEvidence),
 }));
 
 export const companyRelations = relations(company, ({ many }) => ({
@@ -469,6 +554,31 @@ export const resumeVersionRelations = relations(resumeVersion, ({ one }) => ({
   user: one(user, { fields: [resumeVersion.userId], references: [user.id] }),
 }));
 
+export const applicationRelations = relations(application, ({ one, many }) => ({
+  user: one(user, { fields: [application.userId], references: [user.id] }),
+  job: one(job, { fields: [application.jobId], references: [job.id] }),
+  resumeVersion: one(resumeVersion, { fields: [application.resumeVersionId], references: [resumeVersion.id] }),
+  events: many(applicationEvent),
+  followUps: many(followUp),
+  packItems: many(applicationPackItem),
+}));
+
+export const applicationEventRelations = relations(applicationEvent, ({ one }) => ({
+  application: one(application, { fields: [applicationEvent.applicationId], references: [application.id] }),
+}));
+
+export const followUpRelations = relations(followUp, ({ one }) => ({
+  application: one(application, { fields: [followUp.applicationId], references: [application.id] }),
+}));
+
+export const careerEvidenceRelations = relations(careerEvidence, ({ one }) => ({
+  user: one(user, { fields: [careerEvidence.userId], references: [user.id] }),
+}));
+
+export const applicationPackItemRelations = relations(applicationPackItem, ({ one }) => ({
+  application: one(application, { fields: [applicationPackItem.applicationId], references: [application.id] }),
+}));
+
 export const schema = {
   user,
   session,
@@ -480,6 +590,7 @@ export const schema = {
   notification,
   aiUsage,
   featureFlag,
+  usagePeriod,
   usageEvent,
   company,
   employerBoard,
@@ -506,4 +617,14 @@ export const schema = {
   jobSourceRelations,
   resumeRelations,
   resumeVersionRelations,
+  application,
+  applicationEvent,
+  followUp,
+  careerEvidence,
+  applicationPackItem,
+  applicationRelations,
+  applicationEventRelations,
+  followUpRelations,
+  careerEvidenceRelations,
+  applicationPackItemRelations,
 };

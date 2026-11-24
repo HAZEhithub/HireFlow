@@ -1,0 +1,25 @@
+{
+  "name": "@hireflow/applications",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hireflow/db": "workspace:*",
+    "@hireflow/entitlements": "workspace:*",
+    "@hireflow/jobs": "workspace:*",
+    "@hireflow/matching": "workspace:*",
+    "@hireflow/shared": "workspace:*",
+    "drizzle-orm": "^0.38.4",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

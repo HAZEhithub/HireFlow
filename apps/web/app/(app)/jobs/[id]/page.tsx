@@ -1,5 +1,6 @@
+import { getEvidenceMapForUser, listResumeVersionOptions } from "@hireflow/applications";
 import { getDb, jobVerificationSignal, profile } from "@hireflow/db";
-import { freshnessCopy, getJobForUser, isSafeApplyHref } from "@hireflow/jobs";
+import { freshnessCopy, getJobForUser, isSafeApplyHref, jobTrustChips } from "@hireflow/jobs";
 import { matchJobToProfile } from "@hireflow/matching";
 import { Button, Card, EmptyState, TrustChip } from "@hireflow/ui";
 import { eq } from "drizzle-orm";
@@ -8,10 +9,18 @@ import { notFound } from "next/navigation";
 import { requireUser } from "../../../../lib/session";
 import { saveJobAction } from "../actions";
 import { SaveControls } from "../save-controls";
+import { EvidenceMapPanel } from "./evidence-map-panel";
 
-export default async function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function JobDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ resumeVersionId?: string }>;
+}) {
   const user = await requireUser();
   const { id } = await params;
+  const { resumeVersionId } = await searchParams;
   const db = await getDb();
   const row = await getJobForUser(db, user.id, id);
   if (!row) notFound();
@@ -23,6 +32,8 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
     .from(jobVerificationSignal)
     .where(eq(jobVerificationSignal.jobId, row.id));
   const location = row.locationText || [row.city, row.country].filter(Boolean).join(", ") || "Not provided";
+  const versions = await listResumeVersionOptions(db, user.id);
+  const map = await getEvidenceMapForUser(db, user.id, row.id, resumeVersionId).catch(() => null);
 
   return (
     <div className="space-y-6">
@@ -42,6 +53,11 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         </div>
         <div className="flex flex-wrap gap-2">
           <SaveControls jobId={row.id} saved={row.saved} />
+          <Link href={`/applications/new?jobId=${row.id}`}>
+            <Button type="button" variant="secondary">
+              Track application
+            </Button>
+          </Link>
           <Link href={`/resumes/for-job/${row.id}`}>
             <Button type="button" variant="secondary">
               Compare resume
@@ -50,6 +66,11 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
           <Link href={`/resumes/for-job/${row.id}?intent=tailor`}>
             <Button type="button" variant="secondary">
               Tailor resume
+            </Button>
+          </Link>
+          <Link href={`/prepare?jobId=${row.id}`}>
+            <Button type="button" variant="secondary">
+              Company brief
             </Button>
           </Link>
           {isSafeApplyHref(row.applyUrl) ? (
@@ -62,18 +83,11 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <TrustChip tone={row.listingKind === "fixture" || row.listingKind === "user_import" ? "warn" : "neutral"}>
-          {row.listingKind === "fixture"
-            ? "Development sample — not a live opening"
-            : row.listingKind === "user_import"
-              ? "Imported by you"
-              : `${row.source} public board`}
-        </TrustChip>
-        <TrustChip>{freshness.label}</TrustChip>
-        <TrustChip>Status: {row.status}</TrustChip>
-        {row.injectionFlagged ? (
-          <TrustChip tone="warn">Description treated as untrusted source text, not as instructions</TrustChip>
-        ) : null}
+        {jobTrustChips(row, freshness.label).map((chip) => (
+          <TrustChip key={`${chip.label}-${chip.tone}`} tone={chip.tone}>
+            {chip.label}
+          </TrustChip>
+        ))}
       </div>
       <Card>
         <h2 className="font-display text-xl">Source and freshness</h2>
@@ -90,6 +104,8 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
             {row.lastProviderUpdate ? row.lastProviderUpdate.toISOString() : "not provided"}
           </li>
           <li>{freshness.detail}</li>
+          <li>Apply URL status: {row.applyUrlStatus}</li>
+          <li>Retrieval is not independent employer verification.</li>
         </ul>
         {signals.length ? (
           <ul className="mt-3 space-y-1 text-sm">
@@ -150,6 +166,30 @@ export default async function JobDetailPage({ params }: { params: Promise<{ id: 
               : "not provided by the source"}
           </p>
         </div>
+      </Card>
+      <Card>
+        {map ? (
+          <EvidenceMapPanel
+            jobId={row.id}
+            complimentaryPreview={map.complimentaryPreview}
+            disclaimer={map.disclaimer}
+            overall={map.overall}
+            methodology={map.methodology}
+            items={map.items}
+            needsResume={map.needsResume}
+            resumeVersionId={map.resumeVersionId}
+            versions={versions.map((item) => ({
+              id: item.id,
+              title: item.title,
+              versionNumber: item.versionNumber,
+            }))}
+          />
+        ) : (
+          <p className="text-sm text-[var(--color-ink-soft)]">
+            The evidence map could not be loaded. Apply, tracking, and the listing details above still use this job
+            record.
+          </p>
+        )}
       </Card>
       {row.saved ? (
         <Card>

@@ -29,6 +29,22 @@ const INJECTION = [
   /system prompt/i,
 ];
 
+const PAYMENT_REQUEST = [
+  /registration fee/i,
+  /application fee/i,
+  /processing fee/i,
+  /pay (to )?(apply|unlock|shortlist)/i,
+  /send (money|payment|upi)/i,
+  /western union/i,
+  /whatsapp.{0,40}(pay|fee|upi)/i,
+  /gpay|phonepe|paytm/i,
+];
+
+/** Cautionary language only — not a fraud determination. */
+export function looksLikePaymentRequest(text: string): boolean {
+  return PAYMENT_REQUEST.some((re) => re.test(text));
+}
+
 /** Keep the text; flag likely injection so it is never treated as tool instructions. */
 export function sanitizeUntrustedText(input: string, max = 20_000): { text: string; flagged: boolean } {
   const text = htmlToText(input).slice(0, max);

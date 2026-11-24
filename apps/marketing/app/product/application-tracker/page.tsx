@@ -4,7 +4,7 @@ import { pageMeta } from "../../../lib/seo";
 
 export const metadata: Metadata = pageMeta({
   title: "Application tracker",
-  description: "Planned Phase 4: a CRM for applications you submit yourself. Not auto-apply.",
+  description: "Unlimited Free tracker for applications you submit yourself. Not auto-apply.",
   path: "/product/application-tracker",
 });
 
@@ -12,12 +12,12 @@ export default function Page() {
   return (
     <>
       <PageHero
-        kicker="Applications — planned"
+        kicker="Applications"
         title="A CRM for the search, not a bot."
-        body="Phase 4 will track stages from Saved through Offer, Rejected, and Withdrawn, with notes and follow-ups. The authenticated app currently shows an empty tracker. You will always submit the application yourself."
+        body="Track stages from Saved through Preparing, Applied, Interview, Offer, Rejected, and Withdrawn, with notes and in-app follow-ups. Unlimited on Free. You always submit the application yourself on the employer site."
       />
       <Prose>
-        <p>Simplify-style preview autofill may arrive later. Autopilot-style auto-apply will not.</p>
+        <p>The signed-in workspace uses a keyboard-accessible table as the primary view. A board view is visual only. Autopilot-style auto-apply will not ship.</p>
       </Prose>
     </>
   );

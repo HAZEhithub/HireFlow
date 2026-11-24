@@ -19,8 +19,13 @@ export {
 export {
   EntitlementError,
   assertEntitlement,
+  isBillingLive,
   publicCatalog,
   resolvePlan,
+  resolvePlanDefault,
+  setBillingLiveForTests,
+  setPlanResolverForTests,
   type EntitlementCode,
+  type PlanResolver,
   type ResolvedPlan,
 } from "./assert";

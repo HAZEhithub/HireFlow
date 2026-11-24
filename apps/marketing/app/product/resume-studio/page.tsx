@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { PageHero, Prose } from "../../../components/page-hero";
+import { pageMeta } from "../../../lib/seo";
 
-export const metadata: Metadata = { title: "Resume Studio" };
+export const metadata: Metadata = pageMeta({
+  title: "Resume Studio",
+  description: "Parse, edit, analyze, match, and export resumes without paid AI. Completeness is not an ATS score.",
+  path: "/product/resume-studio",
+});
 
 export default function Page() {
   return (
@@ -13,7 +18,7 @@ export default function Page() {
       />
       <Prose>
         <p>Free plan: two resumes. You review extracted fields. Generated wording never adds employers, dates, or skills you did not provide.</p>
-        <p>Resume Studio in the signed-in app parses PDF/DOCX/TXT locally, analyzes completeness (not an ATS score), compares a resume with a real listing, and exports PDF or DOCX. Paid AI is not required and is not enabled.</p>
+        <p>The signed-in app parses PDF/DOCX/TXT locally, analyzes completeness (not an ATS score), compares a resume with a real listing, and exports PDF or DOCX. Paid AI is not required and is not enabled.</p>
       </Prose>
     </>
   );

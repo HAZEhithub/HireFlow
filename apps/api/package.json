@@ -11,6 +11,8 @@
     "start": "tsx src/index.ts"
   },
   "dependencies": {
+    "@hireflow/ai": "workspace:*",
+    "@hireflow/applications": "workspace:*",
     "@hireflow/auth": "workspace:*",
     "@hireflow/config": "workspace:*",
     "@hireflow/db": "workspace:*",

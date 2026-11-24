@@ -8,25 +8,46 @@
         font-family: "IBM Plex Sans", sans-serif;
         margin: 0;
         padding: 16px;
-        width: 280px;
+        width: 320px;
         background: #f4efe6;
         color: #14221c;
       }
-      p {
+      p, label { font-size: 13px; line-height: 1.5; }
+      a { color: #0f6b5c; }
+      button, a.button {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 8px 12px;
+        min-height: 24px;
+        border: 0;
+        border-radius: 6px;
+        background: #0f6b5c;
+        color: #fff;
+        text-decoration: none;
         font-size: 13px;
-        line-height: 1.5;
       }
-      a {
-        color: #0f6b5c;
+      button.secondary { background: transparent; color: #0f6b5c; border: 1px solid #14221c; }
+      textarea, input {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 4px;
+        padding: 8px;
+        border: 1px solid #d7cfc0;
+        border-radius: 6px;
+        font: inherit;
       }
     </style>
   </head>
   <body>
     <strong>HireFlow</strong>
-    <p>
-      Job clipping ships in Phase 5. This extension will send the <em>visible</em> listing and URL
-      from a page you already opened. It will not scrape in the background or submit applications.
-    </p>
-    <p><a href="http://localhost:3000" target="_blank" rel="noreferrer">Open the app</a></p>
+    <p>Saves the visible tab title and URL. Never scrapes in the background. Never submits applications.</p>
+    <label for="title">Title</label>
+    <input id="title" readonly />
+    <label for="url">URL</label>
+    <textarea id="url" rows="3" readonly></textarea>
+    <p id="status"></p>
+    <button type="button" id="copy">Copy title and URL</button>
+    <a class="button" id="import" href="#" target="_blank" rel="noreferrer">Import in HireFlow</a>
+    <script type="module" src="./popup.ts"></script>
   </body>
 </html>

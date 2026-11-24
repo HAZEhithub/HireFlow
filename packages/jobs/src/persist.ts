@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { company, job, jobSkill, jobSource, jobVerificationSignal, type HireFlowDb } from "@hireflow/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { decideDuplicate } from "./dedup";
 import { evaluateFreshness } from "./freshness";
-import { sanitizeUntrustedText } from "./html";
+import { looksLikePaymentRequest, sanitizeUntrustedText } from "./html";
 import { stableId } from "./hash";
 import { canonicalUrl, contentHash, descriptionFingerprint, fingerprint, normalizeCompany } from "./normalize";
 import { persistableApplyUrl } from "./ssrf";
@@ -76,6 +76,33 @@ async function addSignal(db: HireFlowDb, jobId: string, kind: string, message: s
     message,
     evidence,
   });
+}
+
+async function addTextCautions(db: HireFlowDb, jobId: string, description: string, injectionFlagged: boolean) {
+  await db
+    .delete(jobVerificationSignal)
+    .where(
+      and(
+        eq(jobVerificationSignal.jobId, jobId),
+        inArray(jobVerificationSignal.kind, ["untrusted_text", "payment_request"]),
+      ),
+    );
+  if (injectionFlagged) {
+    await addSignal(
+      db,
+      jobId,
+      "untrusted_text",
+      "This description is treated as untrusted source text, not as instructions.",
+    );
+  }
+  if (looksLikePaymentRequest(description)) {
+    await addSignal(
+      db,
+      jobId,
+      "payment_request",
+      "This listing mentions a payment or fee. Treat it as a caution, not a confirmed scam.",
+    );
+  }
 }
 
 export async function upsertCanonicalJobs(db: HireFlowDb, incoming: CanonicalJob[], now = new Date()): Promise<UpsertCounts> {
@@ -204,14 +231,7 @@ export async function upsertCanonicalJobs(db: HireFlowDb, incoming: CanonicalJob
           })
           .onConflictDoNothing();
         await replaceSkills(db, existing.id, item.requiredSkills ?? [], item.preferredSkills ?? []);
-        if (injectionFlagged) {
-          await addSignal(
-            db,
-            existing.id,
-            "untrusted_text",
-            "This description is treated as untrusted source text, not as instructions.",
-          );
-        }
+        await addTextCautions(db, existing.id, sanitized.text, injectionFlagged);
         continue;
       }
 
@@ -241,14 +261,7 @@ export async function upsertCanonicalJobs(db: HireFlowDb, incoming: CanonicalJob
           "Loaded from HireFlow fixtures, not an employer board.",
         );
       }
-      if (injectionFlagged) {
-        await addSignal(
-          db,
-          id,
-          "untrusted_text",
-          "This description is treated as untrusted source text, not as instructions.",
-        );
-      }
+      await addTextCautions(db, id, sanitized.text, injectionFlagged);
       if (!isImport && descFp) {
         const others = await db.query.job.findMany({
           where: and(eq(job.companyId, companyRow.id), eq(job.descriptionFingerprint, descFp)),

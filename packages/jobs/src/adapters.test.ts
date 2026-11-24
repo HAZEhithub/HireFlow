@@ -20,6 +20,7 @@ describe("greenhouse adapter", () => {
       .filter(Boolean);
     expect(jobs).toHaveLength(1);
     expect(jobs[0]?.title).toBe("Software Engineering Intern");
+    expect(jobs[0]?.employmentType).toBe("internship");
     expect(jobs[0]?.applyUrl).toContain("greenhouse.io");
     expect(jobs[0]?.country).toBe("IN");
     expect(jobs[0]?.requiredSkills).toContain("TypeScript");

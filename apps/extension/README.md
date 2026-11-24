@@ -1,10 +1,7 @@
 # HireFlow browser extension
 
-**Phase 5 stub.** This package is not on the Phase 1–4 critical path.
+Clips the **visible tab title and URL** (`activeTab` only). It does not scrape in the background, request `<all_urls>`, or submit applications.
 
-First job discovery (Phase 2) uses a curated ATS employer registry plus **in-app URL import**. Save-job from a page you already opened ships here later so it cannot block Discover or Applications.
+Load unpacked after `pnpm --filter @hireflow/extension build:ext`. Open a job page, click the extension, then **Import in HireFlow** (opens `/jobs/import` with query params) or copy the text.
 
-- Optional host permissions only; never `<all_urls>` by default
-- Visible listing text + URL only
-- Never auto-submit applications
-- `pnpm build` in this package is a no-op so the monorepo build is not blocked
+`pnpm build` in this package stays a no-op so the monorepo production build is not blocked by WXT.

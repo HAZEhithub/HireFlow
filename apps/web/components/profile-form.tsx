@@ -87,6 +87,28 @@ export function ProfileForm({
           </div>
         </Field>
       </div>
+      <fieldset className="rounded-[var(--radius-sm)] border border-[var(--color-rule)] p-4">
+        <legend className="px-1 text-xs font-medium uppercase tracking-wide text-[var(--color-ink-soft)]">
+          India-first search preferences
+        </legend>
+        <p className="mb-3 text-sm text-[var(--color-ink-soft)]">
+          Internship vs full-time is first-class. Availability is your statement, not a visa or campus
+          verification.
+        </p>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="openToInternships" defaultChecked={data.openToInternships} />
+          Open to internships
+        </label>
+        <label className="mt-2 flex items-center gap-2 text-sm">
+          <input type="checkbox" name="openToInternational" defaultChecked={data.openToInternational} />
+          Open to international / remote-abroad roles
+        </label>
+        <div className="mt-3">
+          <Field label="Availability">
+            <Input name="availability" defaultValue={data.availability ?? ""} placeholder="Immediate, after exams, May 2027…" />
+          </Field>
+        </div>
+      </fieldset>
       <fieldset>
         <legend className="mb-2 text-xs font-medium uppercase tracking-wide text-[var(--color-ink-soft)]">
           Employment types
@@ -115,9 +137,6 @@ export function ProfileForm({
         <input type="checkbox" name="relocation" defaultChecked={data.relocation} />
         Open to relocation
       </label>
-      <Field label="Availability">
-        <Input name="availability" defaultValue={data.availability ?? ""} placeholder="Immediate, after exams…" />
-      </Field>
       <Field label="Portfolio URL">
         <Input name="portfolioUrl" type="url" defaultValue={data.portfolioUrl ?? ""} />
       </Field>
@@ -154,14 +173,6 @@ export function ProfileForm({
           defaultValue={(data.projects as { label?: string }[] | null)?.map((row) => row.label).filter(Boolean).join("\n") ?? ""}
         />
       </Field>
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" name="openToInternships" defaultChecked={data.openToInternships} />
-        Open to internships
-      </label>
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" name="openToInternational" defaultChecked={data.openToInternational} />
-        Open to international / remote-abroad roles
-      </label>
       <Button type="submit">{submitLabel}</Button>
     </form>
   );

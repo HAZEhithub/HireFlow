@@ -26,4 +26,4 @@ Resume Studio is the authenticated document workspace at `/resumes`. It is a str
 - No unpaid Gemini for resumes.
 - No invented metrics, employers, dates, or skills.
 - No automatic applications or recruiter messages.
-- Cover letters and the rest of the Application Pack remain Phase 5 placeholders.
+- Cover-letter **AI drafts** remain unimplemented. Application Pack assemble (user paste) ships on each application.

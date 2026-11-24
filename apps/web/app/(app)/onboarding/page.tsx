@@ -17,8 +17,8 @@ export default async function OnboardingPage() {
         <p className="text-xs uppercase tracking-widest text-[var(--color-ink-soft)]">Onboarding</p>
         <h1 className="font-display mt-1 text-4xl">Tell us how you want to work</h1>
         <p className="mt-2 text-[var(--color-ink-soft)]">
-          Only fields that change matching. Resume upload and parsing arrive in Phase 3 — you will
-          review every extracted field before it is saved.
+          Only fields that change matching. Mark internships and availability if they apply. Resume
+          Studio already parses PDF/DOCX/TXT — you review every extracted field before it is saved.
         </p>
       </div>
       <Card>

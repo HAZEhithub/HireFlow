@@ -11,6 +11,10 @@ export default async function ImportJobPage({
   await requireUser();
   const raw = await searchParams;
   const error = typeof raw.error === "string" ? raw.error : undefined;
+  const applyUrl = typeof raw.applyUrl === "string" ? raw.applyUrl : "";
+  const title = typeof raw.title === "string" ? raw.title : "";
+  const companyName = typeof raw.companyName === "string" ? raw.companyName : "";
+  const descriptionText = typeof raw.descriptionText === "string" ? raw.descriptionText : "";
 
   return (
     <div className="space-y-6">
@@ -30,13 +34,13 @@ export default async function ImportJobPage({
       ) : null}
       <form action={importJobAction} className="grid max-w-2xl gap-4">
         <Field label="Application URL" hint="https only. Internal and metadata addresses are blocked.">
-          <Input name="applyUrl" type="url" required placeholder="https://boards.greenhouse.io/..." />
+          <Input name="applyUrl" type="url" required defaultValue={applyUrl} placeholder="https://boards.greenhouse.io/..." />
         </Field>
         <Field label="Job title">
-          <Input name="title" required />
+          <Input name="title" required defaultValue={title} />
         </Field>
         <Field label="Company">
-          <Input name="companyName" required />
+          <Input name="companyName" required defaultValue={companyName} />
         </Field>
         <Field label="Location">
           <Input name="location" placeholder="Bengaluru, India" />
@@ -79,7 +83,7 @@ export default async function ImportJobPage({
           </Field>
         </div>
         <Field label="Description">
-          <Textarea name="descriptionText" />
+          <Textarea name="descriptionText" defaultValue={descriptionText} />
         </Field>
         <Field label="Notes">
           <Textarea name="notes" />

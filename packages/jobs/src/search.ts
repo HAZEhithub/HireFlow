@@ -6,6 +6,7 @@ import {
 } from "@hireflow/db";
 import { and, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { likeContains, SEARCH_PAGE_SIZE_INTERNAL_MAX, type JobSearchQuery } from "./query";
+import { listVerificationSignals } from "./signals";
 import { jobVisibleToUser } from "./visibility";
 
 export type { JobSearchQuery, JobSort } from "./query";
@@ -110,6 +111,14 @@ export async function searchJobs(db: HireFlowDb, userId: string, query: JobSearc
     .innerJoin(company, eq(company.id, job.companyId))
     .where(where);
   const total = countRows[0]?.n ?? 0;
+  const ids = rows.map((row) => row.job.id);
+  const signalRows = await listVerificationSignals(db, ids);
+  const signalsByJob = new Map<string, typeof signalRows>();
+  for (const signal of signalRows) {
+    const list = signalsByJob.get(signal.jobId) ?? [];
+    list.push(signal);
+    signalsByJob.set(signal.jobId, list);
+  }
 
   return {
     total,
@@ -119,6 +128,7 @@ export async function searchJobs(db: HireFlowDb, userId: string, query: JobSearc
       ...row.job,
       companyName: row.company.name,
       saved: Boolean(row.savedId),
+      signals: signalsByJob.get(row.job.id) ?? [],
     })),
   };
 }
@@ -133,6 +143,7 @@ export async function getJobForUser(db: HireFlowDb, userId: string, jobId: strin
     .limit(1);
   const row = rows[0];
   if (!row) return null;
+  const signals = await listVerificationSignals(db, [row.job.id]);
   return {
     ...row.job,
     companyName: row.company.name,
@@ -140,5 +151,6 @@ export async function getJobForUser(db: HireFlowDb, userId: string, jobId: strin
     saved: Boolean(row.savedId),
     savedNotes: row.savedNotes,
     savedAt: row.savedAt,
+    signals,
   };
 }

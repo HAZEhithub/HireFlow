@@ -31,6 +31,8 @@ Scanned PDFs with almost no extractable text are labeled as needing OCR. OCR is 
 
 Deterministic suggestions only: reorder skills/sections, emphasize keywords already present, clarify “worked on” phrasing. Applying decisions creates a **new** resume (`origin_kind = tailored`) with `parent_resume_id`. `assertNoFabrication` refuses new skills, company changes, and date edits.
 
+Application Pack assemble lives in `@hireflow/applications` (paste-only slots). Cover-letter AI drafts remain unimplemented.
+
 Optional local Ollama may later rephrase accepted bullets. External AI stays behind `AI_EXTERNAL_ENABLED` + `PAID_PROVIDERS_ENABLED` + paid consent. Usage logs store feature/provider/tokens, never resume bodies.
 
 ## Templates and export

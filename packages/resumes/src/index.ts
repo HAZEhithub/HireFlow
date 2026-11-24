@@ -1,6 +1,7 @@
 export { ResumeError } from "./errors";
 export { parseResumeFile, parseResumeSections } from "./parse";
 export { analyzeResume } from "./analysis";
+export type { AnalysisFinding, ResumeAnalysisResult } from "./analysis";
 export { buildTailorPlan, applyTailorDecisions, assertNoFabrication } from "./tailor";
 export type { TailorDecision, TailorSuggestion } from "./tailor";
 export { applicationPackForJob, APPLICATION_PACK_SLOTS } from "./pack";

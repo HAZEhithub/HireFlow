@@ -98,10 +98,12 @@ export default function HomePage() {
               </p>
             </Card>
             <Card>
-              <TrustChip tone="warn">Planned</TrustChip>
+              <TrustChip tone="good">Available now</TrustChip>
               <h3 className="font-display mt-3 text-2xl">Jobs, resumes, tracker</h3>
               <p className="mt-2 text-sm text-[var(--color-ink-soft)]">
-                Discover, Resume Studio, and Applications show honest empty states until those phases ship.
+                Discover (registry plus URL import), Resume Studio, unlimited application tracking, evidence
+                vault, and pack assemble. Inventory stays thinner than major boards until verified board IDs
+                are added. Prepare and Insights remain later.
               </p>
             </Card>
           </div>
@@ -130,8 +132,8 @@ export default function HomePage() {
         <Container className="max-w-3xl">
           <h2 className="font-display text-3xl">Career intelligence, later</h2>
           <p className="mt-4 text-[var(--color-ink-soft)]">
-            Evidence vaults, application packs, and job-fit maps are on the roadmap after we have real
-            source data. Job Search Intelligence is Phase 8. We will not invent market statistics.
+            Manual evidence vaults and application-pack assemble are available in the signed-in workspace.
+            Job-fit maps and Job Search Intelligence stay later. We will not invent market statistics.
           </p>
         </Container>
       </section>
@@ -140,7 +142,7 @@ export default function HomePage() {
         <Container>
           <h2 className="font-display text-3xl">How HireFlow works</h2>
           <ol className="mt-8 grid gap-4 md:grid-cols-4">
-            {["Create a free account.", "Share the profile you want — skip what you do not.", "Wait for permitted jobs (Phase 2) or paste a URL.", "Track applications you actually submitted."].map(
+            {["Create a free account.", "Share the profile you want — skip what you do not.", "Search permitted boards or paste a job URL.", "Track applications you actually submitted."].map(
               (step, i) => (
                 <li key={step} className="rounded-[var(--radius-md)] border border-[var(--color-rule)] bg-white p-5">
                   <p className="text-xs uppercase tracking-widest text-[var(--color-accent)]">0{i + 1}</p>

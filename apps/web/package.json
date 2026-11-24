@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@hireflow/applications": "workspace:*",
     "@hireflow/auth": "workspace:*",
     "@hireflow/config": "workspace:*",
     "@hireflow/db": "workspace:*",

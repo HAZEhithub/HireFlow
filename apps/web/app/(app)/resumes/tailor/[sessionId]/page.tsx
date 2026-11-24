@@ -23,7 +23,8 @@ export default async function TailorSessionPage({
         <h1 className="font-display mt-1 text-4xl">Review suggested changes</h1>
         <p className="mt-2 max-w-2xl text-[var(--color-ink-soft)]">
           Accept, reject, or edit each suggestion. The original resume is not modified. HireFlow
-          will not add skills or dates that were not already on your resume.
+          will not add skills or dates that were not already on your resume. Optional local phrasing
+          appears only if you consented in Settings and Ollama is running on this machine.
         </p>
       </div>
       <TailorReview

@@ -14,15 +14,15 @@ export default function Page() {
       <PageHero
         kicker="Job discovery"
         title="Jobs with a source, not a pile."
-        body="Phase 2 uses a curated employer registry of Greenhouse, Lever, and Ashby boards (per-employer IDs — there is no global search API) plus in-app URL import. India coverage without scraping Naukri: ATS employers hiring in India or remote, and jobs you paste. The browser extension is Phase 5."
+        body="Discover uses a curated employer registry of Greenhouse, Lever, and Ashby boards (per-employer IDs — there is no global search API) plus in-app URL import. India coverage without scraping Naukri: ATS employers hiring in India or remote, and jobs you paste. Inventory is thinner than major boards until verified board IDs are added."
       />
       <Prose>
-        <h2 className="font-display text-2xl text-[var(--color-ink)]">Problem</h2>
-        <p>Aggregators optimize for volume. Duplicates and expired posts waste time. Closed boards cannot be copied legally.</p>
         <h2 className="font-display text-2xl text-[var(--color-ink)]">What exists today</h2>
         <p>
-          The authenticated app shows an honest empty Discover state until ingestion ships. That is
-          better than fake listings.
+          Search, save, import, internship and full-time filters, and trust signals (source, last
+          retrieved, stale, duplicate, broken apply link, payment-request language). Compatibility is
+          an overlap of your profile — not a hire probability. The production registry starts empty
+          until board identifiers are verified; fixtures and URL import work locally.
         </p>
         <h2 className="font-display text-2xl text-[var(--color-ink)]">What we will not do</h2>
         <p>Server-side scrape of LinkedIn, Indeed, Naukri, or Workday. Invented jobs for SEO. JobPosting JSON-LD on search pages.</p>

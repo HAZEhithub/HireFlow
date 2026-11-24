@@ -13,7 +13,7 @@ Phase 0 decisions (revised 2026-11-20). Each ADR is binding until superseded.
 | [0007](ADR-0007-object-storage.md) | Local then R2; Neon Object Storage rejected for v1 |
 | [0008](ADR-0008-notifications.md) | In-app first; Resend optional |
 | [0009](ADR-0009-job-search-intelligence.md) | Job Search Intelligence deferred to Phase 8 |
-| [schema-v1.md](schema-v1.md) | Data model Phase 1–3 (`notification`, jobs, `resume*`) |
+| [schema-v1.md](schema-v1.md) | Data model Phase 1–5 (`notification`, jobs, `resume*`, applications, evidence, pack) |
 | [resume-intelligence.md](resume-intelligence.md) | Parse, matching evidence, tailoring, export |
 | [job-discovery.md](job-discovery.md) | Phase 2 adapters, freshness, dedup, search, SSRF, ingest ops |
 | [BILLING_AND_ENTITLEMENTS.md](BILLING_AND_ENTITLEMENTS.md) | Plan catalog; billing not live |

@@ -1,7 +1,7 @@
 "use server";
 
 import { revokeSession } from "@hireflow/auth";
-import { completenessFrom, getDb, notification, profile, user, userSettings } from "@hireflow/db";
+import { completenessFrom, getDb, notification, profile, savedJob, user, userSettings } from "@hireflow/db";
 import { assertEntitlement } from "@hireflow/entitlements";
 import { purgeUserResumeFiles } from "@hireflow/resumes";
 import { profileSchema, settingsSchema } from "@hireflow/shared";
@@ -140,6 +140,7 @@ export async function deleteAccountAction(formData: FormData) {
   }
   const db = await getDb();
   await purgeUserResumeFiles(current.id);
+  await db.delete(savedJob).where(eq(savedJob.userId, current.id));
   await db.delete(user).where(eq(user.id, current.id));
   const jar = await cookies();
   jar.delete("better-auth.session_token");

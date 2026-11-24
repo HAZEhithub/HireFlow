@@ -27,6 +27,7 @@ export const PLANS = {
     offerCopy: "₹199/month + applicable GST",
     indicativeGstRateHypothesis: 0.18,
     indicativeTotalInr: 234.82,
+    indicativeUsdHypothesis: 9,
     billingLive: false,
     notAnOfferUntilBilling: true,
   },
@@ -55,6 +56,7 @@ export type EntitlementKey =
   | "resumes.max_versions"
   | "resumes.parse_export"
   | "ai.assists_per_month"
+  | "ai.resume_analysis"
   | "resume.tailoring"
   | "resume.cover_letter"
   | "applications.follow_ups"
@@ -64,6 +66,7 @@ export type EntitlementKey =
   | "applications.pack"
   | "matching.evidence_map"
   | "prepare.company_brief"
+  | "prepare.interview"
   | "coach.search_strategy"
   | "skills.graph"
   | "research.portfolio"
@@ -80,6 +83,7 @@ export type EntitlementDefinition = {
   implementedNow: boolean;
   earliestPhase: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
   grantable: boolean;
+  complimentaryWhileBillingOff?: boolean;
   notes: string;
 };
 
@@ -90,7 +94,7 @@ export const ENTITLEMENTS: readonly EntitlementDefinition[] = [
   { key: "notifications.inbox", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "Empty inbox is valid." },
   { key: "usage.read", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "AI and request counters. No prompt bodies." },
   { key: "jobs.discover", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "Curated ATS registry plus URL import. Empty until boards or fixtures are ingested." },
-  { key: "applications.tracker", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "Empty tracker; unlimited when CRUD ships." },
+  { key: "applications.tracker", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "Unlimited application tracker on Free." },
   { key: "resumes.studio", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "Resume Studio dashboard, editor, and preview." },
   { key: "account.export", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "JSON export." },
   { key: "account.delete", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 1, grantable: true, notes: "Account deletion." },
@@ -103,15 +107,17 @@ export const ENTITLEMENTS: readonly EntitlementDefinition[] = [
   { key: "resumes.max_versions", kind: "quota", unit: "count", free: 2, pro: "unlimited", implementedNow: true, earliestPhase: 3, grantable: true, notes: "Free: two resume documents. Existing documents stay readable after the cap." },
   { key: "resumes.parse_export", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 3, grantable: true, notes: "Parse PDF/DOCX/TXT locally. User review required before saving structured fields." },
   { key: "ai.assists_per_month", kind: "quota", unit: "count_per_month", free: 5, pro: 50, implementedNow: true, earliestPhase: 3, grantable: true, notes: "Optional local Ollama phrasing only. Deterministic parse/match/export do not count. 50 is a cost cap, not unlimited AI." },
+  { key: "ai.resume_analysis", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 3, grantable: true, notes: "Documentation alias of matching.explainable plus resumes.parse_export. Deterministic overlap and local parse only — not a separate LLM analysis product." },
   { key: "resume.tailoring", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 3, grantable: true, notes: "Deterministic, user-approved suggestions. Never overwrites the original. Counts toward resume document cap." },
   { key: "resume.cover_letter", kind: "boolean", free: false, pro: true, implementedNow: false, earliestPhase: 5, grantable: true, notes: "Cover letter drafts, user-approved." },
-  { key: "applications.follow_ups", kind: "boolean", free: true, pro: true, implementedNow: false, earliestPhase: 4, grantable: true, notes: "In-app reminders." },
-  { key: "applications.analytics", kind: "boolean", free: false, pro: true, implementedNow: false, earliestPhase: 6, grantable: true, notes: "Personal pipeline analytics with small-n caveats." },
-  { key: "extension.save_job", kind: "boolean", free: true, pro: true, implementedNow: false, earliestPhase: 5, grantable: true, notes: "Not ingestion." },
-  { key: "evidence.vault_items", kind: "quota", unit: "count", free: 10, pro: 50, implementedNow: false, earliestPhase: 5, grantable: true, notes: "Career Evidence Vault." },
-  { key: "applications.pack", kind: "boolean", free: true, pro: true, implementedNow: false, earliestPhase: 5, grantable: true, notes: "Free assemble; Pro AI drafts later." },
-  { key: "matching.evidence_map", kind: "boolean", free: false, pro: true, implementedNow: false, earliestPhase: 6, grantable: true, notes: "Requirement-to-evidence job-fit map." },
-  { key: "prepare.company_brief", kind: "boolean", free: false, pro: true, implementedNow: false, earliestPhase: 6, grantable: true, notes: "Company/interview brief from sourced fields only." },
+  { key: "applications.follow_ups", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 4, grantable: true, notes: "In-app reminders. HireFlow never emails unless Resend is configured later." },
+  { key: "applications.analytics", kind: "boolean", free: false, pro: true, implementedNow: true, earliestPhase: 6, grantable: true, complimentaryWhileBillingOff: true, notes: "Personal pipeline analytics with small-n caveats. Complimentary while billing is off; Pro when checkout is approved." },
+  { key: "extension.save_job", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 5, grantable: true, notes: "Clips visible tab title and URL. Not ingestion. Never auto-submits." },
+  { key: "evidence.vault_items", kind: "quota", unit: "count", free: 10, pro: 50, implementedNow: true, earliestPhase: 5, grantable: true, notes: "Career Evidence Vault. User-provided; never invented." },
+  { key: "applications.pack", kind: "boolean", free: true, pro: true, implementedNow: true, earliestPhase: 5, grantable: true, notes: "Free assemble by paste. Pro AI drafts remain unimplemented." },
+  { key: "matching.evidence_map", kind: "boolean", free: false, pro: true, implementedNow: true, earliestPhase: 6, grantable: true, complimentaryWhileBillingOff: true, notes: "Requirement-to-evidence job-fit map from resume quotes. Complimentary while billing is off; Pro when checkout is approved." },
+  { key: "prepare.company_brief", kind: "boolean", free: false, pro: true, implementedNow: true, earliestPhase: 6, grantable: true, complimentaryWhileBillingOff: true, notes: "Company brief from sourced ATS/job fields only. Complimentary while billing is off; Pro when checkout is approved." },
+  { key: "prepare.interview", kind: "boolean", free: false, pro: true, implementedNow: false, earliestPhase: 6, grantable: true, notes: "Interview practice. Not implemented. No live copilots." },
   { key: "coach.search_strategy", kind: "boolean", free: false, pro: true, implementedNow: false, earliestPhase: 7, grantable: true, notes: "User pipeline only." },
   { key: "skills.graph", kind: "boolean", free: false, pro: true, implementedNow: false, earliestPhase: 7, grantable: true, notes: "No market demand claims." },
   { key: "research.portfolio", kind: "boolean", free: false, pro: false, implementedNow: false, earliestPhase: 8, grantable: false, notes: "Research only." },

@@ -40,7 +40,11 @@ export default async function JobsPage({
           is an overlap of your profile fields — not a hire probability.
         </p>
       </div>
-      <FiltersForm values={flat} />
+      <FiltersForm
+        values={flat}
+        availability={p?.availability}
+        openToInternships={p?.openToInternships}
+      />
       <p className="text-sm text-[var(--color-ink-soft)]">
         {result.total} result{result.total === 1 ? "" : "s"}
       </p>

@@ -15,6 +15,7 @@ export const FIXTURE_GREENHOUSE_PAYLOAD = {
       internal_job_id: 70001,
       title: "Software Engineering Intern",
       updated_at: "2026-10-01T09:00:00.000Z",
+      employment: "Internship",
       location: { name: "Bengaluru, India" },
       absolute_url: "https://boards.greenhouse.io/hireflow-fixture-greenhouse/jobs/90001",
       content:

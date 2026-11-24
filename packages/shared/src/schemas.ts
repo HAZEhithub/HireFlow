@@ -1,6 +1,10 @@
 import { z } from "zod";
 import {
+  APPLICATION_PACK_SLOT_IDS,
+  APPLICATION_SOURCES,
+  APPLICATION_STAGES,
   EMPLOYMENT_TYPES,
+  EVIDENCE_KINDS,
   PROFILE_STATUSES,
   WORKPLACE_PREFERENCES,
 } from "./constants";
@@ -41,6 +45,45 @@ export const settingsSchema = z.object({
   locale: z.string().max(16).optional(),
   aiExternalConsent: z.boolean().optional(),
   aiPaidConsent: z.boolean().optional(),
+});
+
+const applicationFields = z.object({
+  jobId: z.string().min(1).max(80).optional().nullable(),
+  companyName: z.string().trim().max(160).optional().or(z.literal("")),
+  title: z.string().trim().max(200).optional().or(z.literal("")),
+  stage: z.enum(APPLICATION_STAGES).optional(),
+  source: z.enum(APPLICATION_SOURCES).optional(),
+  resumeVersionId: z.string().min(1).max(80).optional().nullable(),
+  notes: z.string().max(4000).optional().nullable(),
+  applyUrl: z.string().url().max(2000).optional().nullable().or(z.literal("")),
+});
+
+export const applicationWriteSchema = applicationFields.refine(
+  (data) => Boolean(data.jobId) || (Boolean(data.companyName?.trim()) && Boolean(data.title?.trim())),
+  { message: "Company and title are required unless a job is linked." },
+);
+
+export const applicationPatchSchema = applicationFields.partial().extend({
+  companyName: z.string().trim().min(1).max(160).optional(),
+  title: z.string().trim().min(1).max(200).optional(),
+});
+
+export const followUpWriteSchema = z.object({
+  dueAt: z.string().min(1),
+  title: z.string().trim().min(1).max(160).optional(),
+  body: z.string().max(2000).optional().nullable(),
+});
+
+export const evidenceWriteSchema = z.object({
+  kind: z.enum(EVIDENCE_KINDS),
+  title: z.string().trim().min(1).max(160),
+  body: z.string().max(4000).optional().nullable(),
+  url: z.string().url().max(2000).optional().nullable().or(z.literal("")),
+});
+
+export const packItemWriteSchema = z.object({
+  slot: z.enum(APPLICATION_PACK_SLOT_IDS),
+  body: z.string().trim().min(1).max(8000),
 });
 
 export const onboardingSchema = profileSchema.extend({

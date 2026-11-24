@@ -16,7 +16,7 @@ Do not silently change ₹199.
 
 ## What is free (now)
 
-Account, session, profile, settings, empty Jobs / Resume Studio / Applications, in-app inbox, usage meter, JSON export, account deletion.
+Account, session, profile, settings, Jobs, Resume Studio, unlimited application tracker, in-app follow-ups, evidence vault (10 items), pack assemble, in-app inbox, usage meter, JSON export, account deletion.
 
 ## What is free (when those modules ship)
 

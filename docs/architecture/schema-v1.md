@@ -144,9 +144,11 @@ DDL is created idempotently in `packages/db/src/ensure-schema.ts` (PGlite-safe).
 
 **resume**, **resume_version**, **resume_document**, **resume_analysis**, **resume_job_match**, **resume_tailoring_session**, **resume_export** — implemented in Phase 3. Content is JSONB on `resume_version` (not a separate section table). Files are stored privately; `storage_key` is never returned to clients.
 
-**application** — user_id, job_id null, company_name, title, stage, source, resume_version_id, notes  
-**application_event** — application_id, from_stage, to_stage, at  
-**follow_up** — application_id, due_at, done_at  
+**application** — implemented: user_id, job_id null, company_name, title, stage (`saved|preparing|applied|interview|offer|rejected|withdrawn`), source, resume_version_id, notes, apply_url  
+**application_event** — application_id, user_id, from_stage, to_stage, at  
+**follow_up** — application_id, user_id, title, body, due_at, done_at  
+**career_evidence** — user_id, kind, title, body, url, quoted_as (`user-provided`)  
+**application_pack_item** — user_id, application_id, slot, body, source (`user_paste`)  
 
 Ownership: all user rows cascade delete with the user.
 

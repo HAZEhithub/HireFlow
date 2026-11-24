@@ -1,4 +1,4 @@
-import { freshnessCopy } from "@hireflow/jobs";
+import { freshnessCopy, jobTrustChips } from "@hireflow/jobs";
 import { TrustChip } from "@hireflow/ui";
 import type { MatchExplanation } from "@hireflow/matching";
 import Link from "next/link";
@@ -25,11 +25,15 @@ export function JobCard({
     lastProviderUpdate?: Date | null;
     status: string;
     saved: boolean;
+    applyUrlStatus?: string | null;
+    injectionFlagged?: boolean | null;
+    signals?: Array<{ kind: string; message: string }>;
   };
   match?: MatchExplanation;
 }) {
   const freshness = freshnessCopy(job.freshnessLabel, job.listingKind);
   const location = job.locationText || [job.city, job.country].filter(Boolean).join(", ") || "Location not provided";
+  const chips = jobTrustChips(job, freshness.label);
   return (
     <article className="rounded-[var(--radius-md)] border border-[var(--color-rule)] bg-white p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -47,16 +51,11 @@ export function JobCard({
         <SaveControls jobId={job.id} saved={job.saved} />
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        <TrustChip tone={job.listingKind === "fixture" || job.status !== "open" ? "warn" : "neutral"}>
-          {job.listingKind === "fixture"
-            ? "Development sample"
-            : job.listingKind === "user_import"
-              ? "Imported by you"
-              : `${job.source} board`}
-        </TrustChip>
-        <TrustChip tone={job.freshnessLabel === "stale" || job.freshnessLabel === "expired" ? "warn" : "good"}>
-          {freshness.label}
-        </TrustChip>
+        {chips.map((chip) => (
+          <TrustChip key={`${chip.label}-${chip.tone}`} tone={chip.tone}>
+            {chip.label}
+          </TrustChip>
+        ))}
         {match?.needsMoreProfile ? (
           <TrustChip>Compatibility needs profile</TrustChip>
         ) : match?.overall != null ? (
@@ -71,6 +70,7 @@ export function JobCard({
           : job.lastProviderUpdate
             ? ` · Employer last updated ${job.lastProviderUpdate.toISOString().slice(0, 10)}`
             : " · Publication date not provided"}
+        {" · Retrieval is not independent employer verification."}
       </p>
     </article>
   );
